@@ -1,25 +1,14 @@
-module.exports.hello = function (context, req) {
-    context.log('JavaScript HTTP trigger function processed a request.');
-
-    if (req.query.name || (req.body && req.body.name)) {
-        res = {
-            // status: 200, /* Defaults to 200 */
-            body: "Hello " + (req.query.name || req.body.name)
-        };
-    }
-    else {
-        res = {
-            status: 400,
-            body: "Please pass a name on the query string or in the request body"
-        };
-    }
-    context.done(null, res);
-};
-
-module.exports.helloQueue = function (context, queueItem) {
-    context.log('JavaScript queue trigger function processed work item', queueItem);
-    context.bindings.blobOut = {
-        "hello": "world"
-    }
-    context.done();
-};
+const createAzureFunctionHandler = require("azure-function-express").createAzureFunctionHandler;
+const express = require("express");
+ 
+// Create express app as usual 
+const app = express();
+app.get("/api/:foo/:bar", (req, res) => {
+  res.json({
+    foo  : req.params.foo,
+    bar  : req.params.bar
+  });
+});
+ 
+// Binds the express app to an Azure Function handler 
+module.exports = createAzureFunctionHandler(app);
